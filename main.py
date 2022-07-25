@@ -58,7 +58,7 @@ for duration_cluster_size in duration_cluster_sizes:
         for embedding_dim in embedding_dims:
             for device_path in devices:
                 duration_cluster_size = str(duration_cluster_size)
-                training_loader, featureVectors, tensor_x, frequencies = utils.load_data("/Users/jbao/vqvae/devices/" + device_path + "/" + duration_cluster_size)
+                training_loader, featureVectors, tensor_x, frequencies = utils.load_data("devices/" + device_path + "/" + duration_cluster_size)
                 """
                 Set up VQ-VAE model with components defined in ./models/ folder
                 """
@@ -122,11 +122,11 @@ for duration_cluster_size in duration_cluster_sizes:
                 embedding_loss, x_hat, perplexity, min_encodings, min_encoding_indices, embedding_weights = model(
                     tensor_x)
 
-                os.makedirs("/Users/jbao/vqvae/saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim), exist_ok=True)
-                modelfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/model.pkl"
-                embeddingfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/embedding.pkl"
-                frequenciesfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/frequencies.pkl"
-                tokensfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/real_data.txt"
+                os.makedirs("saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim), exist_ok=True)
+                modelfilepath = "saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/model.pkl"
+                embeddingfilepath = "saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/embedding.pkl"
+                frequenciesfilepath = "saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/frequencies.pkl"
+                tokensfilepath = "saved_models/" + device_path + "/" + duration_cluster_size + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/real_data.txt"
 
                 with open(modelfilepath, 'wb') as file:
                     torch.save(model, file)

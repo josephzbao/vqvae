@@ -19,16 +19,16 @@ def readTokens(path):
 duration_cluster_sizes = [25, 50, 100]
 n_embeddings = [500, 2000, 5000]
 embedding_dims = [128, 512]
-devices = ["EdimaxPlug1101W", "WeMoSwitch", "MAXGateway", "HomeMaticPlug", "D-LinkCam", "EdimaxCam2", "EdnetCam1", "Aria", "D-LinkDayCam", "D-LinkDoorSensor", "D-LinkHomeHub", "D-LinkSensor", "D-LinkSiren", "D-LinkSwitch", "D-LinkWaterSensor", "EdimaxCam1", "EdimaxPlug2101W", "EdnetCam2", "EdnetGateway", "HueBridge", "HueSwitch", "iKettle2", "Lightify", "SmarterCoffee", "TP-LinkPlugHS100", "TP-LinkPlugHS110", "WeMoInsightSwitch", "WeMoInsightSwitch2", "WeMoLink", "WeMoSwitch2", "Withings"]
+devices = ["EdimaxPlug1101W", "WeMoSwitch", "MAXGateway", "HomeMaticPlug", "D-LinkCam", "EdimaxCam2", "EdnetCam1", "Aria", "D-LinkDayCam", "D-LinkDoorSensor", "D-LinkHomeHub", "D-LinkSensor", "D-LinkSiren", "D-LinkSwitch", "D-LinkWaterSensor", "EdimaxCam1", "EdimaxPlug2101W", "EdnetCam2", "EdnetGateway", "HueBridge", "HueSwitch", "Lightify", "TP-LinkPlugHS100", "TP-LinkPlugHS110", "WeMoInsightSwitch", "WeMoInsightSwitch2", "WeMoLink", "WeMoSwitch2", "Withings"]
 
 for duration_cluster_size in duration_cluster_sizes:
     for n_embedding in n_embeddings:
         for embedding_dim in embedding_dims:
             for device_path in devices:
-                modelfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/model.pkl"
-                embeddingfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/embedding.pkl"
-                frequenciesfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/frequencies.pkl"
-                tokensfilepath = "/Users/jbao/vqvae/saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/real_data.txt"
+                modelfilepath = "saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/model.pkl"
+                embeddingfilepath = "saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/embedding.pkl"
+                frequenciesfilepath = "saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/frequencies.pkl"
+                tokensfilepath = "saved_models/" + device_path + "/" + str(duration_cluster_size) + "/" + str(n_embedding) + "/" + str(embedding_dim) + "/real_data.txt"
 
                 with open(modelfilepath, 'rb+') as file:
                     model = torch.load(modelfilepath)
@@ -43,7 +43,7 @@ for duration_cluster_size in duration_cluster_sizes:
                     frequencies = pickle.load(file)
                     file.close()
 
-                path = "/Users/jbao/vqvae/IoTFlowGenerator-main/devices/" + device_path + "/" + str(duration_cluster_size)
+                path = "devices/" + device_path + "/" + str(duration_cluster_size)
 
                 all_tokens = readTokens(tokensfilepath)
 
