@@ -2,24 +2,21 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from models.encoder import Encoder
 from models.quantizer import VectorQuantizer
-from models.decoder import Decoder
+from models.transformer import TSTransformerEncoder
 
 
 class VQVAE(nn.Module):
-    def __init__(self, h_dim, res_h_dim, n_res_layers,
+    def __init__(self, feat_dim, max_len,
                  n_embeddings, embedding_dim, beta, save_img_embedding_map=False):
         super(VQVAE, self).__init__()
         # encode image into continuous latent space
-        self.encoder = Encoder(3, h_dim, n_res_layers, res_h_dim)
-        self.pre_quantization_conv = nn.Conv2d(
-            h_dim, embedding_dim, kernel_size=1, stride=1)
+        self.encoder = TSTransformerEncoder(feat_dim, embedding_dim, max_len)
         # pass continuous latent vector through discretization bottleneck
         self.vector_quantization = VectorQuantizer(
             n_embeddings, embedding_dim, beta)
         # decode the discrete latent representation
-        self.decoder = Decoder(embedding_dim, h_dim, n_res_layers, res_h_dim)
+        self.decoder = TSTransformerEncoder(embedding_dim, feat_dim, max_len)
 
         if save_img_embedding_map:
             self.img_to_embedding_map = {i: [] for i in range(n_embeddings)}
@@ -29,9 +26,7 @@ class VQVAE(nn.Module):
     def forward(self, x, verbose=False):
 
         z_e = self.encoder(x)
-
-        z_e = self.pre_quantization_conv(z_e)
-        embedding_loss, z_q, perplexity, _, _ = self.vector_quantization(
+        embedding_loss, z_q, perplexity, min_encodings, min_encoding_indices, embedding_weights = self.vector_quantization(
             z_e)
         x_hat = self.decoder(z_q)
 
@@ -41,4 +36,30 @@ class VQVAE(nn.Module):
             print('recon data shape:', x_hat.shape)
             assert False
 
-        return embedding_loss, x_hat, perplexity
+        return embedding_loss, x_hat, perplexity, min_encodings, min_encoding_indices, embedding_weights
+
+
+if __name__ == "__main__":
+    # random data
+    x = np.random.random_sample((3, 20, 5))
+    x = torch.tensor(x).float()
+
+    # test transformer
+    decoder = VQVAE(5, 20, 100, 10, 0.25)
+    decoder_out = decoder(x)
+    print('Dncoder out shape:', decoder_out[1].shape)
+    print(decoder_out[4].shape)
+
+    filepath = "/saved_models/D-LinkCam/saved.pkl"
+
+    with open(filepath, 'w') as file:
+      torch.save(decoder, filepath)
+
+    with open(filepath, 'r') as file:
+      # Then later:
+      model = torch.load(filepath)
+      encoder = model.encoder
+      encoder_output = encoder(x)
+      print(encoder_output)
+
+

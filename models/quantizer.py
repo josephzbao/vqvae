@@ -33,16 +33,15 @@ class VectorQuantizer(nn.Module):
 
         z (continuous) -> z_q (discrete)
 
-        z.shape = (batch, channel, height, width)
 
         quantization pipeline:
 
-            1. get encoder input (B,C,H,W)
-            2. flatten input to (B*H*W,C)
+            1. get encoder input (B,S,F)
+            2. flatten input to (B*S,F)
 
         """
-        # reshape z -> (batch, height, width, channel) and flatten
-        z = z.permute(0, 2, 3, 1).contiguous()
+
+        # reshape z -> (batch, seq, feat) and flatten
         z_flattened = z.view(-1, self.e_dim)
         # distances from z to embeddings e_j (z - e)^2 = z^2 + e^2 - 2 e * z
 
@@ -71,6 +70,6 @@ class VectorQuantizer(nn.Module):
         perplexity = torch.exp(-torch.sum(e_mean * torch.log(e_mean + 1e-10)))
 
         # reshape back to match original input shape
-        z_q = z_q.permute(0, 3, 1, 2).contiguous()
+        # z_q = z_q.permute(0, 3, 1, 2).contiguous()
 
-        return loss, z_q, perplexity, min_encodings, min_encoding_indices
+        return loss, z_q, perplexity, min_encodings, min_encoding_indices, self.embedding.weight
