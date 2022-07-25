@@ -190,8 +190,11 @@ def convert_frame_lengths1(all_packet_frame_lengths, all_packet_sigs):
                         ps_freqs = frequencies[packet_sig]
                         ps_freqs[packet_frame_length] = ps_freqs[packet_frame_length] + 1
                         frequencies[packet_sig] = ps_freqs
-    max_token = max(token_to_frames.keys())
-    clustering = DBSCAN(eps=4, min_samples=2).fit(np.array(all_extra_frame_lengths))
+    if len(token_to_frames.keys()) == 0:
+        max_token = -1
+    else:
+        max_token = max(token_to_frames.keys())
+    clustering = DBSCAN(eps=2, min_samples=2).fit(np.array(all_extra_frame_lengths))
     leftovers = []
     for i in range(len(clustering.labels_)):
         packet_frame_length = all_extra_frame_lengths[i][0]
@@ -214,7 +217,10 @@ def convert_frame_lengths1(all_packet_frame_lengths, all_packet_sigs):
                     ps_freqs = frequencies[token]
                     ps_freqs[packet_frame_length] = ps_freqs[packet_frame_length] + 1
                     frequencies[token] = ps_freqs
-    max_token = max(token_to_frames.keys())
+    if len(token_to_frames.keys()) == 0:
+        max_token = -1
+    else:
+        max_token = max(token_to_frames.keys())
     if len(leftovers) != 0:
         kmeans = KMeans(n_clusters=len(leftovers), random_state=0).fit(np.array(leftovers))
         for i in range(len(kmeans.labels_)):
